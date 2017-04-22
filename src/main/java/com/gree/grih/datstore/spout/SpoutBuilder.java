@@ -1,8 +1,10 @@
-package com.gree.grih.datstore;
+package com.gree.grih.datstore.spout;
 
+import com.gree.grih.datstore.conf.Configurer;
 import org.apache.storm.kafka.*;
 import org.apache.storm.spout.SchemeAsMultiScheme;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,9 +27,16 @@ public class SpoutBuilder {
         String zkRoot = config.getProperty(Configurer.KAFKA_ZKROOT);
         String clientId = config.getProperty(Configurer.KAFKA_CLIENT_ID);
         SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, topic, zkRoot, clientId);
-
+        List<String> zkServers = new ArrayList<String>();
+        zkServers.add("127.0.0.1");
         spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
-
+        spoutConfig.zkServers = zkServers;
+        spoutConfig.zkPort = 2181;
+        spoutConfig.ignoreZkOffsets = false;
+        spoutConfig.bufferSizeBytes = 1024;
+        spoutConfig.fetchMaxWait = 1;
+        spoutConfig.fetchSizeBytes = 1024 * 100;
+        spoutConfig.stateUpdateIntervalMs = 1000;
         KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);
 
         return kafkaSpout;

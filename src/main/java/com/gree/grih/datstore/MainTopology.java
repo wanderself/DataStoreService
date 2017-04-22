@@ -1,5 +1,10 @@
 package com.gree.grih.datstore;
 
+import com.gree.grih.datstore.bolt.BoltBuilder;
+import com.gree.grih.datstore.bolt.SoutBolt;
+import com.gree.grih.datstore.conf.Configurer;
+import com.gree.grih.datstore.spout.SpoutBuilder;
+
 import org.apache.log4j.Logger;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -14,7 +19,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * com.gree.grih.datstore
+ * MainTopology
  * Created by root on 17th.Apr.2017
  */
 public class MainTopology {
@@ -25,18 +30,11 @@ public class MainTopology {
     public BoltBuilder boltBuilder;
 
 
-    public static void main(String[] args) {
-        MainTopology mainTopology = new MainTopology("config.properties");
-        mainTopology.submitTopology(args);
-
-    }
-
-
     public MainTopology(String configFileName) {
         configs = new Properties();
 
         try {
-            configs.load(MainTopology.class.getResourceAsStream(configFileName));
+            configs.load(MainTopology.class.getResourceAsStream("/" + configFileName));
             boltBuilder = new BoltBuilder(configs);
             spoutBuilder = new SpoutBuilder(configs);
         } catch (IOException e) {
@@ -45,6 +43,11 @@ public class MainTopology {
         }
     }
 
+    public static void main(String[] args) {
+        MainTopology mainTopology = new MainTopology("config.properties");
+        mainTopology.submitTopology(args);
+
+    }
 
     private void submitTopology(String[] args) {
 
@@ -56,7 +59,7 @@ public class MainTopology {
         builder.setSpout(configs.getProperty(Configurer.KAFKA_SPOUT_ID), kafkaSpout, kafkaSpoutCount);
 
         int soutBoltCount = Integer.parseInt(configs.getProperty(Configurer.HBASE_BOLT_COUNT));
-        builder.setBolt(configs.getProperty(Configurer.HBASE_BOLT_ID), soutBolt, soutBoltCount);
+        builder.setBolt(configs.getProperty(Configurer.HBASE_BOLT_ID), soutBolt).shuffleGrouping(configs.getProperty(Configurer.KAFKA_SPOUT_ID));
 
         Config conf = new Config();
         conf.setDebug(false);
@@ -80,55 +83,8 @@ public class MainTopology {
             conf.setMaxTaskParallelism(1);
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology(topologyName, conf, builder.createTopology());
-            cluster.shutdown();
+//            cluster.shutdown();
         }
     }
 
 }
-
-
-//        try {
-
-//            String kafkaZk = "127.0.0.1:2181";
-//            BrokerHosts brokerHosts = new ZkHosts(kafkaZk);
-//            String topic = "incoming";
-//            String zkRoot = "/storm";
-//            List<String> zkHost = new ArrayList<String>();
-//            zkHost.add("127.0.0.1");
-//            String spoutId = "spoutId";
-//
-//            SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, topic, zkRoot, spoutId);
-//            spoutConfig.scheme = new SchemeAsMultiScheme(new MsgScheme());
-//            spoutConfig.zkServers = zkHost;
-//            spoutConfig.zkPort = 2181;
-//            spoutConfig.ignoreZkOffsets = false;
-//            spoutConfig.bufferSizeBytes = 1024;
-//            spoutConfig.fetchMaxWait = 1;
-//            spoutConfig.fetchSizeBytes = 1024 * 100;
-//            spoutConfig.stateUpdateIntervalMs = 1000;
-
-
-//            TopologyBuilder builder = new TopologyBuilder();
-//            builder.setSpout("kafka-spout", new KafkaSpout(spoutConfig), 1);
-//            builder.setBolt("print-messages", new SoutBolt()).shuffleGrouping("kafka-spout");
-//
-//            Config config = new Config();
-//            config.setDebug(false);
-//
-//            StormTopology stormTopology = builder.createTopology();
-//
-//            if (args != null && args.length > 0) {
-//                LOG.info("----------   Starting CloudCluster !   ----------  ");
-//                config.setNumWorkers(1);
-//                StormSubmitter.submitTopology(args[0], config, stormTopology);
-//            } else {
-//                LOG.info("----------   Starting LocalCluster !   ----------  ");
-//                config.setMaxTaskParallelism(1);
-//                LocalCluster cluster = new LocalCluster();
-//                cluster.submitTopology("Simple", config, stormTopology);
-////                cluster.shutdown();
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }

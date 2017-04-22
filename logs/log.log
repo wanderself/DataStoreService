@@ -15,3 +15,19 @@
 127337 [Thread-14-kafka-spout-executor[2 2]] INFO  o.a.s.k.ZkCoordinator - Task [1/1] Deleted partition managers: []
 127337 [Thread-14-kafka-spout-executor[2 2]] INFO  o.a.s.k.ZkCoordinator - Task [1/1] New partition managers: []
 127337 [Thread-14-kafka-spout-executor[2 2]] INFO  o.a.s.k.ZkCoordinator - Task [1/1] Finished refreshing
+
+10.2.5.203	Master02
+10.2.5.202	Master01
+10.2.5.131	Slave01
+10.2.5.132	Slave02
+10.2.5.133	Slave03
+10.2.5.134	Slave04
+10.2.5.135	Slave05
+10.2.5.136	Slave06
+10.2.5.137	Slave07
+10.2.5.138	Slave08
+10.2.5.139	Slave09
+10.2.5.140	Slave10
+10.2.5.141	Slave11
+10.2.5.142	Slave12
+10.2.5.143	Slave13

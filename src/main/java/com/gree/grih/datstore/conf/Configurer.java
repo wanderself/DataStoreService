@@ -1,4 +1,4 @@
-package com.gree.grih.datstore;
+package com.gree.grih.datstore.conf;
 
 /**
  * Created by root on 4/21/17.
@@ -8,7 +8,7 @@ public class Configurer {
     public static final String TOPOLOGY_NAME = "topology";
 
     //kafka spout
-    public static final String KAFKA_SPOUT_ID = "kafka-spout.id";
+    public static final String KAFKA_SPOUT_ID = "kafkaspout.id";
     public static final String KAFKA_ZKHOST = "kafka.zkHost";
     public static final String KAFKA_ZKROOT = "kafka.zkRoot";
     public static final String KAFKA_TOPIC = "kafa.topic";
@@ -16,6 +16,6 @@ public class Configurer {
     public static final String KAFKA_SPOUT_COUNT = "kafkaspout.count";
 
     //hbase bolt
-    public static final String HBASE_BOLT_ID = "hbase-bolt";
+    public static final String HBASE_BOLT_ID = "hbasebolt.id";
     public static final String HBASE_BOLT_COUNT = "hbasebolt.count";
 }

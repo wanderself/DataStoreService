@@ -1,4 +1,4 @@
-package com.gree.grih.datstore;
+package com.gree.grih.datstore.bolt;
 
 import java.util.Properties;
 
