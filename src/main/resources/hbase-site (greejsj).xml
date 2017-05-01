@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-    <!--<property>-->
-    <!--<name>hbase.rootdir</name>-->
-    <!--<value>hdfs://10.2.5.203/hbase</value>-->
-    <!--</property>-->
+    <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://nameservice/hbase</value>
+    </property>
     <property>
         <name>hbase.zookeeper.quorum</name>
         <value>Slave01,Master01,Master02</value>
     </property>
+    <!--<property>-->
+    <!--<name>hbase.zookeeper.quorum</name>-->
+    <!--<value>Master01</value>-->
+    <!--</property>-->
+    <!--<property>-->
+    <!--<name>hbase.zookeeper.quorum</name>-->
+    <!--<value>Slave01</value>-->
+    <!--</property>-->
     <property>
         <name>zookeeper.znode.parent</name>
         <value>/hbase</value>

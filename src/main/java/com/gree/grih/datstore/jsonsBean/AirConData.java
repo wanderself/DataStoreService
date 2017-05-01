@@ -7,13 +7,14 @@ package com.gree.grih.datstore.jsonsBean;
 public class AirConData {
 
     public String mac;
+    public String mid;
     public String rowKey;
     public String ctime;
     public String svrCtime;
     public CtlStatus CtlStatus;
-    public InOutStatus InOutStatus;
-    public InnerUnit InStatusFault;
-    public OuterUnit OutStatusFault;
+    public InOutUnit InOutStatus;
+    public InnerStatus InStatusFault;
+    public OuterStatus OutStatusFault;
     public String MonthPower;
     public BarCode DevInfoRes;
 
@@ -64,12 +65,12 @@ public class AirConData {
         public String xtkzwykle;
     }
 
-    public static class InOutStatus {
+    public static class InOutUnit {
 
-        public InnerStatus in;
-        public OuterStatus out;
+        public InnerUnit in;
+        public OuterUnit out;
 
-        public static class InnerStatus {
+        public static class InnerUnit {
             public String txbb;
             public String txsd;
             public String lnjx;
@@ -97,7 +98,7 @@ public class AirConData {
             public String jx;
         }
 
-        public static class OuterStatus {
+        public static class OuterUnit {
             public String txbb;
             public String txsd;
             public String lnjx;
@@ -123,7 +124,7 @@ public class AirConData {
         }
     }
 
-    public static class InnerUnit {
+    public static class InnerStatus {
         public String kgjzt;
         public String yxms;
         public String nfjzs;
@@ -185,7 +186,7 @@ public class AirConData {
         public String njglxhgz;
     }
 
-    public static class OuterUnit {
+    public static class OuterStatus {
         public String ysjkgzt;
         public String hsms;
         public String ysjyxzs;

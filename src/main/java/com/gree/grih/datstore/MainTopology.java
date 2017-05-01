@@ -4,7 +4,6 @@ import com.gree.grih.datstore.bolt.BoltBuilder;
 import com.gree.grih.datstore.bolt.SoutBolt;
 import com.gree.grih.datstore.conf.Configurer;
 import com.gree.grih.datstore.spout.SpoutBuilder;
-
 import org.apache.log4j.Logger;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -59,7 +58,7 @@ public class MainTopology {
         builder.setSpout(configs.getProperty(Configurer.KAFKA_SPOUT_ID), kafkaSpout, kafkaSpoutCount);
 
         int soutBoltCount = Integer.parseInt(configs.getProperty(Configurer.HBASE_BOLT_COUNT));
-        builder.setBolt(configs.getProperty(Configurer.HBASE_BOLT_ID), soutBolt).shuffleGrouping(configs.getProperty(Configurer.KAFKA_SPOUT_ID));
+        builder.setBolt(configs.getProperty(Configurer.HBASE_BOLT_ID), soutBolt, soutBoltCount).shuffleGrouping(configs.getProperty(Configurer.KAFKA_SPOUT_ID));
 
         Config conf = new Config();
         conf.setDebug(false);

@@ -28,8 +28,9 @@ public class SpoutBuilder {
         String clientId = config.getProperty(Configurer.KAFKA_CLIENT_ID);
         SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, topic, zkRoot, clientId);
         List<String> zkServers = new ArrayList<String>();
-        zkServers.add("127.0.0.1");
-        spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+        zkServers.add("10.2.5.202");
+        zkServers.add("10.2.5.203");
+        spoutConfig.scheme = new SchemeAsMultiScheme(new StringKeyValueScheme());
         spoutConfig.zkServers = zkServers;
         spoutConfig.zkPort = 2181;
         spoutConfig.ignoreZkOffsets = false;
