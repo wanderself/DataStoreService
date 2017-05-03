@@ -8,13 +8,13 @@ import java.util.Properties;
  */
 public class BoltBuilder {
 
-    public Properties config;
+    private Properties config;
 
     public BoltBuilder(Properties config) {
         this.config = config;
     }
 
     public SoutBolt buildSoutBolt() {
-        return new SoutBolt();
+        return new SoutBolt(config);
     }
 }

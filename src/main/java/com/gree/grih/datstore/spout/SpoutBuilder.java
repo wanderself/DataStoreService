@@ -2,11 +2,12 @@ package com.gree.grih.datstore.spout;
 
 import com.gree.grih.datstore.conf.Configurer;
 import org.apache.storm.kafka.*;
-import org.apache.storm.spout.SchemeAsMultiScheme;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static java.util.Arrays.asList;
 
 /**
  * SpoutBuilder
@@ -14,7 +15,7 @@ import java.util.Properties;
  */
 public class SpoutBuilder {
 
-    public Properties config;
+    private Properties config;
 
     public SpoutBuilder(Properties config) {
         this.config = config;
@@ -26,20 +27,18 @@ public class SpoutBuilder {
         String topic = config.getProperty(Configurer.KAFKA_TOPIC);
         String zkRoot = config.getProperty(Configurer.KAFKA_ZKROOT);
         String clientId = config.getProperty(Configurer.KAFKA_CLIENT_ID);
+        List<String> zkServers = new ArrayList<String>(asList(config.getProperty(Configurer.ZK_SERVER1), config.getProperty(Configurer.ZK_SERVER2), config.getProperty(Configurer.ZK_SERVER3)));
+
         SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, topic, zkRoot, clientId);
-        List<String> zkServers = new ArrayList<String>();
-        zkServers.add("10.2.5.202");
-        zkServers.add("10.2.5.203");
-        spoutConfig.scheme = new SchemeAsMultiScheme(new StringKeyValueScheme());
+        spoutConfig.scheme = new KeyValueSchemeAsMultiScheme(new KafkaKeyMsgScheme());
         spoutConfig.zkServers = zkServers;
-        spoutConfig.zkPort = 2181;
+        spoutConfig.zkPort = Integer.valueOf(config.getProperty(Configurer.ZK_PORT));
         spoutConfig.ignoreZkOffsets = false;
         spoutConfig.bufferSizeBytes = 1024;
         spoutConfig.fetchMaxWait = 1;
         spoutConfig.fetchSizeBytes = 1024 * 100;
         spoutConfig.stateUpdateIntervalMs = 1000;
-        KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);
 
-        return kafkaSpout;
+        return new KafkaSpout(spoutConfig);
     }
 }

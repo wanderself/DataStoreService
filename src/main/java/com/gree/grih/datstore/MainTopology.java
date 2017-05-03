@@ -24,12 +24,12 @@ import java.util.Properties;
 public class MainTopology {
 
     private static Logger LOG = Logger.getLogger(MainTopology.class);
-    public Properties configs;
-    public SpoutBuilder spoutBuilder;
-    public BoltBuilder boltBuilder;
+    private Properties configs;
+    private SpoutBuilder spoutBuilder;
+    private BoltBuilder boltBuilder;
 
 
-    public MainTopology(String configFileName) {
+    private MainTopology(String configFileName) {
         configs = new Properties();
 
         try {

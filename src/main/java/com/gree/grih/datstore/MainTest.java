@@ -12,6 +12,7 @@ import org.apache.storm.topology.TopologyBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Main
@@ -19,6 +20,7 @@ import java.util.List;
  */
 public class MainTest {
 
+    private Properties configs;
     private static Logger LOG = Logger.getLogger(MainTest.class);
 
     public static void main(String[] args) {

@@ -1,6 +1,7 @@
 package com.gree.grih.datstore.bolt;
 
 import com.google.gson.Gson;
+import com.gree.grih.datstore.conf.Configurer;
 import com.gree.grih.datstore.jsonsBean.AirConData;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * SoutBolt
@@ -26,7 +28,7 @@ import java.util.Map;
  */
 public class SoutBolt extends BaseBasicBolt {
 
-    public static Configuration HBASE_CONFIG = new Configuration();
+    private static Configuration HBASE_CONFIG = new Configuration();
     private static Logger LOG = LoggerFactory.getLogger(SoutBolt.class);
 
     static {
@@ -35,9 +37,19 @@ public class SoutBolt extends BaseBasicBolt {
         HBASE_CONFIG.set("hbase.rootdir", "hdfs://10.2.5.203/hbase");
     }
 
-    private AirConData data;
+    private Properties configs;
     private Connection connection;
     private Table table;
+    private String key;
+
+    SoutBolt(Properties configs) {
+        this.configs = configs;
+    }
+
+    public SoutBolt() {
+
+    }
+
 
     @Override
     public void prepare(Map stormConf, TopologyContext context) {
@@ -51,24 +63,34 @@ public class SoutBolt extends BaseBasicBolt {
     }
 
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
-        System.out.println(tuple.getString(0));
+
 //        LOG.info(tuple.toString());
-        data = decode(tuple.getString(0));
-        String lastRowKey = gets("GRIH:REALTIME", data.mac, "last", "lastRowKey");
-        if (lastRowKey != null) {
-            endTime(data, lastRowKey);
+
+        if (tuple.getStringByField("key").length() > 0) key = tuple.getStringByField("key");
+        LOG.info("kafka message key: " + key);
+        if (key.equals("aircon")) {
+            String msg = tuple.getStringByField("value");
+            LOG.info("kafka message content: " + msg);
+
+            AirConData data = decode(msg);
+            String lastRowKey = gets(configs.getProperty(Configurer.HBASE_TABLE_REALTIME), data.mac, "last", "lastRowKey");
+            if (lastRowKey != null) {
+                endTime(data, lastRowKey);
+            }
+            hisInsert(data);
+            realTimeIns(data);
+        } else {
+            LOG.error("WRONG KAFKA KEY DETECTED!");
         }
-        hisInsert(data);
-        realTimeIns(data);
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         outputFieldsDeclarer.declare(new Fields("message"));
     }
 
-    public void hisInsert(AirConData data) {
+    private void hisInsert(AirConData data) {
         try {
-            table = connection.getTable(TableName.valueOf("GRIH:TEST"));
+            table = connection.getTable(TableName.valueOf(configs.getProperty(Configurer.HBASE_TABLE_HISTORY)));
 
             Put put = new Put(Bytes.toBytes(data.rowKey));
             puts(put, data);
@@ -78,7 +100,7 @@ public class SoutBolt extends BaseBasicBolt {
         }
     }
 
-    public void realTimeIns(AirConData data) {
+    private void realTimeIns(AirConData data) {
         try {
             table = connection.getTable(TableName.valueOf("GRIH:REALTIME"));
             Put put = new Put(Bytes.toBytes(data.mac));
@@ -91,7 +113,7 @@ public class SoutBolt extends BaseBasicBolt {
         }
     }
 
-    public void puts(Put put, AirConData data) {
+    private void puts(Put put, AirConData data) {
         put.addColumn(Bytes.toBytes("DevInfoRes"), Bytes.toBytes("mac"), Bytes.toBytes(data.mac));
         put.addColumn(Bytes.toBytes("DevInfoRes"), Bytes.toBytes("mid"), Bytes.toBytes(data.mid));
         put.addColumn(Bytes.toBytes("DevInfoRes"), Bytes.toBytes("barCode"), Bytes.toBytes(data.DevInfoRes.tiaoma));
@@ -363,7 +385,7 @@ public class SoutBolt extends BaseBasicBolt {
 
     }
 
-    public String gets(String tableName, String rowKey, String family, String qualifier) {
+    private String gets(String tableName, String rowKey, String family, String qualifier) {
         String value = null;
         try {
             table = connection.getTable(TableName.valueOf(tableName));
@@ -376,7 +398,7 @@ public class SoutBolt extends BaseBasicBolt {
         return value;
     }
 
-    public void endTime(AirConData data, String lastRowKey) {
+    private void endTime(AirConData data, String lastRowKey) {
         try {
             table = connection.getTable(TableName.valueOf("GRIH:TEST"));
 
@@ -389,10 +411,9 @@ public class SoutBolt extends BaseBasicBolt {
         }
     }
 
-    public AirConData decode(String jstr) {
+    private AirConData decode(String jstr) {
         Gson gson = new Gson();
-        AirConData data = gson.fromJson(jstr, AirConData.class);
-        return data;
+        return gson.fromJson(jstr, AirConData.class);
     }
 
     @Override
