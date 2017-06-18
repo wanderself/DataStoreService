@@ -20,8 +20,8 @@ import java.util.Properties;
  */
 public class MainTest {
 
-    private Properties configs;
     private static Logger LOG = Logger.getLogger(MainTest.class);
+    private Properties configs;
 
     public static void main(String[] args) {
 

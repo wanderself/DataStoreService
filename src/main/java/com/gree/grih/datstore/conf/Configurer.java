@@ -30,4 +30,7 @@ public class Configurer {
     //Hbase configuration
     public static final String HBASE_TABLE_REALTIME = "hbase.table.realtime";
     public static final String HBASE_TABLE_HISTORY = "hbase.table.history";
+
+    public static final String REDIS_BOLT_ID = "redis.bolt.id";
+    public static final String REDIS_BOLT_COUNT = "redis.bolt.count";
 }

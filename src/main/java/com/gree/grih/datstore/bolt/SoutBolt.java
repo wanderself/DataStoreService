@@ -15,10 +15,12 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
+import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -40,7 +42,6 @@ public class SoutBolt extends BaseBasicBolt {
     private Properties configs;
     private Connection connection;
     private Table table;
-    private String key;
 
     SoutBolt(Properties configs) {
         this.configs = configs;
@@ -65,7 +66,7 @@ public class SoutBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
 
 //        LOG.info(tuple.toString());
-
+        String key = null;
         if (tuple.getStringByField("key").length() > 0) key = tuple.getStringByField("key");
         LOG.info("kafka message key: " + key);
         if (key.equals("aircon")) {
@@ -79,13 +80,14 @@ public class SoutBolt extends BaseBasicBolt {
             }
             hisInsert(data);
             realTimeIns(data);
+            basicOutputCollector.emit(getNextTuple(data));
         } else {
             LOG.error("WRONG KAFKA KEY DETECTED!");
         }
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("message"));
+        outputFieldsDeclarer.declare(new Fields("moshi", "wendu", " zysf", "sxsf", "fs", "sm", "sm4", "sm23", "dg", "fr", "province", "country"));
     }
 
     private void hisInsert(AirConData data) {
@@ -414,6 +416,27 @@ public class SoutBolt extends BaseBasicBolt {
     private AirConData decode(String jstr) {
         Gson gson = new Gson();
         return gson.fromJson(jstr, AirConData.class);
+    }
+
+    private List<Object> getNextTuple(AirConData data) {
+        String moshi = data.CtlStatus.ms;
+        String wendu = data.CtlStatus.wd;
+        String zysf = data.CtlStatus.zysf;
+        String sxsf = data.CtlStatus.sxsf;
+        String fs = data.CtlStatus.fs;
+        String sm = data.CtlStatus.sm;
+        String sm4 = data.CtlStatus.sm4;
+        String sm23 = data.CtlStatus.sm23;
+        String dg = data.CtlStatus.dg;
+        String fr = data.CtlStatus.zr;
+        String country = gets(configs.getProperty(Configurer.HBASE_TABLE_REALTIME), data.mac, "DevInfoRes", "country");
+        String province = gets(configs.getProperty(Configurer.HBASE_TABLE_REALTIME), data.mac, "DevInfoRes", "province");
+
+        if (country == null || province == null) {
+            return new Values(moshi, wendu, zysf, sxsf, fs, sm, sm4, sm23, dg, fr, "NULL", "NULL");
+        } else {
+            return new Values(moshi, wendu, zysf, sxsf, fs, sm, sm4, sm23, dg, fr, province, country);
+        }
     }
 
     @Override

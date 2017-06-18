@@ -17,4 +17,8 @@ public class BoltBuilder {
     public SoutBolt buildSoutBolt() {
         return new SoutBolt(config);
     }
+
+    public RedisBolt buildRedisBolt() {
+        return new RedisBolt(config);
+    }
 }

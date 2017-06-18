@@ -1,6 +1,7 @@
 package com.gree.grih.datstore;
 
 import com.gree.grih.datstore.bolt.BoltBuilder;
+import com.gree.grih.datstore.bolt.RedisBolt;
 import com.gree.grih.datstore.bolt.SoutBolt;
 import com.gree.grih.datstore.conf.Configurer;
 import com.gree.grih.datstore.spout.SpoutBuilder;
@@ -53,12 +54,19 @@ public class MainTopology {
         TopologyBuilder builder = new TopologyBuilder();
         KafkaSpout kafkaSpout = spoutBuilder.buildKafkaSpout();
         SoutBolt soutBolt = boltBuilder.buildSoutBolt();
+        RedisBolt redisBolt = boltBuilder.buildRedisBolt();
 
+        String kafkaSpoutID = configs.getProperty(Configurer.KAFKA_SPOUT_ID);
         int kafkaSpoutCount = Integer.parseInt(configs.getProperty(Configurer.KAFKA_SPOUT_COUNT));
-        builder.setSpout(configs.getProperty(Configurer.KAFKA_SPOUT_ID), kafkaSpout, kafkaSpoutCount);
+        builder.setSpout(kafkaSpoutID, kafkaSpout, kafkaSpoutCount);
 
+        String soutBoltID = configs.getProperty(Configurer.HBASE_BOLT_ID);
         int soutBoltCount = Integer.parseInt(configs.getProperty(Configurer.HBASE_BOLT_COUNT));
-        builder.setBolt(configs.getProperty(Configurer.HBASE_BOLT_ID), soutBolt, soutBoltCount).shuffleGrouping(configs.getProperty(Configurer.KAFKA_SPOUT_ID));
+        builder.setBolt(soutBoltID, soutBolt, soutBoltCount).shuffleGrouping(kafkaSpoutID);
+
+        String redisBoltID = configs.getProperty(Configurer.REDIS_BOLT_ID);
+        int redisBoltCount = Integer.parseInt(configs.getProperty(Configurer.REDIS_BOLT_COUNT));
+        builder.setBolt(redisBoltID, redisBolt, redisBoltCount).shuffleGrouping(soutBoltID);
 
         Config conf = new Config();
         conf.setDebug(false);
