@@ -1,6 +1,7 @@
 package com.gree.grih.datstore;
 
 import com.gree.grih.datstore.bolt.BoltBuilder;
+import com.gree.grih.datstore.bolt.ProcedureBolt;
 import com.gree.grih.datstore.bolt.RedisBolt;
 import com.gree.grih.datstore.bolt.SoutBolt;
 import com.gree.grih.datstore.conf.Configurer;
@@ -54,7 +55,7 @@ public class MainTopology {
         TopologyBuilder builder = new TopologyBuilder();
         KafkaSpout kafkaSpout = spoutBuilder.buildKafkaSpout();
         SoutBolt soutBolt = boltBuilder.buildSoutBolt();
-        RedisBolt redisBolt = boltBuilder.buildRedisBolt();
+        ProcedureBolt procedureBolt = boltBuilder.buildRedisBolt();
 
         String kafkaSpoutID = configs.getProperty(Configurer.KAFKA_SPOUT_ID);
         int kafkaSpoutCount = Integer.parseInt(configs.getProperty(Configurer.KAFKA_SPOUT_COUNT));
@@ -64,9 +65,9 @@ public class MainTopology {
         int soutBoltCount = Integer.parseInt(configs.getProperty(Configurer.HBASE_BOLT_COUNT));
         builder.setBolt(soutBoltID, soutBolt, soutBoltCount).shuffleGrouping(kafkaSpoutID);
 
-        String redisBoltID = configs.getProperty(Configurer.REDIS_BOLT_ID);
-        int redisBoltCount = Integer.parseInt(configs.getProperty(Configurer.REDIS_BOLT_COUNT));
-        builder.setBolt(redisBoltID, redisBolt, redisBoltCount).shuffleGrouping(soutBoltID);
+        String procedureBoltID = configs.getProperty(Configurer.MYSQL_BOLT_ID);
+        int procedureBoltCount = Integer.parseInt(configs.getProperty(Configurer.MYSQL_BOLT_COUNT));
+        builder.setBolt(procedureBoltID, procedureBolt, procedureBoltCount).shuffleGrouping(soutBoltID);
 
         Config conf = new Config();
         conf.setDebug(false);

@@ -12,11 +12,13 @@ public class AirConData {
     public String ctime;
     public String svrCtime;
     public CtlStatus CtlStatus;
+    public CtlResponse CtlResponse;
     public InOutUnit InOutStatus;
     public InnerStatus InStatusFault;
     public OuterStatus OutStatusFault;
-    public String MonthPower;
+    public MonthPower MonthPower;
     public BarCode DevInfoRes;
+
 
     public static class CtlStatus {
         public String ykajxhbzw;
@@ -63,6 +65,103 @@ public class AirConData {
         public String xtkzwrfmk;
         public String xtkzwwifimk;
         public String xtkzwykle;
+    }
+
+    public static class CtlResponse {
+        public String jsq;
+        public String jsqtx;
+        public String hqzz;
+        public String hqdy;
+        public String jk;
+        public String dm;
+        public String qxjtx;
+        public String jcbfsqd;
+        public String wifikg;
+        public String wifihfcc;
+        public String kqzlpjdw;
+        public String pm25dw;
+        public String kgj;
+        public String ms;
+        public String sleep;
+        public String sf;
+        public String fs;
+        public String wd;
+        public String ds;
+        public String dssj;
+        public String gz;
+        public String fr;
+        public String dg;
+        public String cq;
+        public String wddw;
+        public String hq;
+        public String lsljydlfwql;
+        public String zdqj;
+        public String sxsf;
+        public String zysf;
+        public String fm;
+        public String wdxsms;
+        public String qcts;
+        public String ykj;
+        public String sdxs;
+        public String sdsd;
+        public String saver;
+        public String cobj;
+        public String gea;
+        public String zdqx;
+        public String hf;
+        public String hfms;
+        public String hsh1;
+        public String glwqxtx;
+        public String sb;
+        public String sm;
+        public String fcktled;
+        public String dsxhcs;
+        public String qz;
+        public String dsk;
+        public String dsg;
+        public String csms;
+        public String txsb;
+        public String sleepMode;
+        public String mute;
+        public String qyxz;
+        public String sm1hhwd;
+        public String sm2hhwd;
+        public String hj;
+        public String f5;
+        public String ddfs;
+        public String ex;
+        public String sm3hhwd;
+        public String sm4hhwd;
+        public String sm5hhwd;
+        public String sm6hhwd;
+        public String sm7hhwd;
+        public String sm8hhwd;
+        public String stf;
+        public String sxsffk;
+        public String hx;
+        public String znhq;
+        public String dnsz;
+        public String yhsdyddw;
+        public String jzcr;
+        public String hjqy9;
+        public String hjqy8;
+        public String hjqy7;
+        public String hjqy6;
+        public String hjqy5;
+        public String hjqy4;
+        public String hjqy3;
+        public String hjqy2;
+        public String hjqy1;
+        public String hwyk;
+        public String fault;
+        public String zkfs;
+        public String hjms;
+        public String xcfksxsf;
+        public String xcfkzczysf;
+        public String xcfkyczysf;
+        public String snhjwd;
+        public String hjsdz;
+        public String swhjwd;
     }
 
     public static class InOutUnit {
@@ -298,5 +397,9 @@ public class AirConData {
 
     public static class BarCode {
         public String tiaoma;
+    }
+
+    public static class MonthPower {
+        public String ktyxdqgl;
     }
 }
